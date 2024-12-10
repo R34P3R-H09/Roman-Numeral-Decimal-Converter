@@ -6,5 +6,6 @@ This will be the eventual aim.
 
 Any collaborations welcome.
 
-The program firstly explains the roman numerals and what each numeral represents numericaly.
+The aim of the program is to firstly explain the roman numerals and what each numeral represents numericaly.
 It then askes for the user to input a numeral that they wish to convert to decimal.
+Once executed the programme will output the interger. If a valid numeral is not entered the user will be told. 
