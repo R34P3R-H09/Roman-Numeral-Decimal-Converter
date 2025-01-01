@@ -2,7 +2,7 @@
 
 Write a simple program that converts a given Roman Numeral to Integer.
 
-The first upload will be in Python. 
+I will do the initial upload in Python.
 
 This project came about from an online challenge to write the program in as many different languages as possible.
 The eventual aim will be to have as many in the repo as we can.
