@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roman Numeral to Integer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Convert Roman Numeral to Integer</h2>
+        <input type="text" id="romanInput" placeholder="Enter Roman Numeral" />
+        <button onclick="convertRomanToInteger()">Convert</button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function convertRomanToInteger() {
+            // Get the input value
+            const roman = document.getElementById('romanInput').value.toUpperCase();
+            const resultDiv = document.getElementById('result');
+
+            // Check if the input is valid (only contains Roman numeral characters)
+            if (!/^[IVXLCDM]+$/.test(roman)) {
+                resultDiv.innerHTML = '<span class="error">Invalid Roman numeral! Please enter a valid Roman numeral.</span>';
+                return;
+            }
+
+            // Roman numeral to integer conversion function
+            const romanMap = {
+                'I': 1,
+                'V': 5,
+                'X': 10,
+                'L': 50,
+                'C': 100,
+                'D': 500,
+                'M': 1000
+            };
+
+            let total = 0;
+
+            for (let i = 0; i < roman.length; i++) {
+                const current = romanMap[roman[i]];
+                const next = romanMap[roman[i + 1]];
+
+                // If current numeral is less than the next, subtract it
+                if (next && current < next) {
+                    total -= current;
+                } else {
+                    total += current;
+                }
+            }
+
+            resultDiv.innerHTML = `The integer value of Roman numeral ${roman} is: ${total}`;
+        }
+    </script>
+
+</body>
+</html>
