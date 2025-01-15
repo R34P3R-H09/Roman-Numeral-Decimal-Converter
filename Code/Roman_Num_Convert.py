@@ -43,7 +43,7 @@ time.sleep(6)
 print("\nHere is a breakdown of what each numeral represents ")
 time.sleep(3)
 
-print("\nI : 1\nV : 5\nX : 10\nL : 50\nC : 1000\nD : 500\nM : 1000")
+print("\nI : 1\nV : 5\nX : 10\nL : 50\nC : 100\nD : 500\nM : 1000")
 time.sleep(3)
 
 
