@@ -2,8 +2,6 @@
 
 Write a simple program that converts a user input Roman Numeral to an Integer.
 
-The initial upload will be in Python.
-
 This project came about from an online challenge to write the program in as many different languages as possible.
 The eventual aim will be to have as many in the repo as I can.
 
