@@ -1,0 +1,333 @@
+// rNumeral2Decimal.cpp
+// ExplictChimp 15/01/2025
+// Version 0.1
+
+//Does not currently adhered to the 3 off M rule as this would limit the range from 1 to 3999.
+
+// The rules that a numera has to follow are:
+// 1) Only the characters M, D, C, L, X, V, I are numerals                                                  (Filter created)
+// 2) The normal order of the numbers is the largest on the left descending to smallest on the right.       (Check created)
+// 3) If a larger number is preceded by a smaller one then it should be a subtraction set.                  (Check created)
+// 4) The are only 6 subtraction sets that are allowed (IV,IX,XL,XC, CD, CM).                               (Check created)
+// 5) Any subtraction set can be used only once in any numeral.                                             (Check created)
+// 6) Numerals M, C, X and I, can each be used a maximum of 3 times in any numeral (M excluded for now).    (Check created)
+// 7) Numerals D, L and V can each be used only once in any numeral.                                        (Check created)
+// 8) All numbers are positive, there is no negative numbers.                                               (Filter created)
+// 9) The decimal equivalents are M = 1000, D = 500, C = 100, L = 50, X = 10, V = 5, I = 1.                 (Completed)
+// 10) The subtraction pairs IV and IX are always at the end                                                (Check created)
+
+// Required Libraries
+#include <iostream>
+#include <utility>
+#include <string>
+#include <vector>
+
+
+//Global Variables
+const bool global_debug{ true }; //Change this to true for debugging
+std::string global_string{ "" };
+std::vector<int> global_vector;
+
+// Function Prototyping
+void convertStringToVectorOfInt(std::string& str);
+//bool isSimpleForm(); // this has to come after the numeral check!
+void numeralCheck();
+int checkSubtractionPairs(int a, int b);
+void sumUp();
+
+int main()
+{   
+    int answer{ 0 };
+    // Force Console to diplay true and false
+    std::cout << std::boolalpha;
+
+    // Acquire the Roman numeral
+    std::cout << "Please enter a proper Roman numeral.\n";
+    std::getline(std::cin, global_string);
+
+    // Convert to a vector of integers
+    convertStringToVectorOfInt(global_string);
+
+    //Debug Section
+    if (global_debug) {
+        // Print out string
+        for (int i{ 0 }; i < global_string.size(); i++) {
+            std::cout << global_string[i] << ", ";
+        }
+        std::cout << "\n";
+        // Print out vector
+        for (int i{ 0 }; i < global_vector.size(); i++) {
+            std::cout << global_vector[i] << ", ";
+        }
+        std::cout << "\n";
+
+    }
+    
+    // Check the rules and then sum
+    numeralCheck();
+}
+// Convert a string to a vector of integers and filter out none numeral characters
+void convertStringToVectorOfInt(std::string& str) {
+
+    // Check the string isn't empty
+    if (global_string.size() > 0) {
+        for (std::string::iterator it = str.begin(); it != str.end(); ++it) {
+            switch (*it) {
+            case 'M':
+            case 'm':
+                global_vector.push_back(1000);
+                break;
+
+            case 'D':
+            case 'd':
+                global_vector.push_back(500);
+                break;
+
+            case 'C':
+            case 'c':
+                global_vector.push_back(100);
+                break;
+
+            case 'L':
+            case 'l':
+                global_vector.push_back(50);
+                break;
+
+            case 'X':
+            case 'x':
+                global_vector.push_back(10);
+                break;
+
+            case 'V':
+            case 'v':
+                global_vector.push_back(5);
+                break;
+
+            case 'I':
+            case 'i':
+                global_vector.push_back(1);
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+}
+
+void numeralCheck() {
+    int subtractionLevel{ 0 }, lastSubtractionLevel{ 255 }, M{ 0 }, D{ 0 }, C{ 0 }, L{ 0 }, 
+        X{ 0 }, V{ 0 }, I{ 0 }, IV{ 0 }, IX{ 0 }, XL{ 0 }, XC{ 0 }, CD{ 0 }, CM{ 0 }, lastNumeral{ 0 };
+    bool lastSubtraction{ false };
+
+    // Check vector has at least one element
+    if (global_vector.size() > 0) {
+        // Loop throught the elements
+        for (int i{ 0 }; i < global_vector.size(); i++) {
+            // Check not at end of vector
+            if (i < global_vector.size() - 1) {
+                // If not at end then check if it looks like a subtraction pair
+                if (global_vector[i] < global_vector[i + 1]) {
+                    // If it is then check is a correct subtraction pair
+                    subtractionLevel = checkSubtractionPairs(global_vector[i], global_vector[i + 1]);
+                    if (subtractionLevel > -1) {
+                        // It is a correct pair so check it is in order (descending levels)
+                        if (subtractionLevel < lastSubtractionLevel) {
+                            // It is so store this new level, increment the appropiate variable,
+                            // carryout the subtraction and erase the element at i + 1. 
+                            // Check if it is a last subtraction pair IV or IX then there should be no more
+                            // numerals to check after the subtraction has taken place.
+                            lastSubtractionLevel = subtractionLevel;
+                            if (lastSubtractionLevel == 0 || lastSubtractionLevel == 1) {
+                                lastSubtraction = true;
+                            }
+                            switch (global_vector[i], global_vector[i + 1]) {
+                            case (1,5):
+                                IV += 1;
+                                break;
+                            case (1, 10):
+                                IX += 1;
+                                break;
+                            case (10, 50):
+                                XL += 1;
+                                break;
+                            case (10, 100):
+                                XC += 1;
+                                break;
+                            case (100, 500):
+                                CD += 1;
+                                break;
+                            case (100, 1000):
+                                CM += 1;
+                                break;
+                            default:
+                                break;
+                            }
+                            global_vector[i] = global_vector[i + 1] - global_vector[i];
+                            if (global_debug) {
+                                std::cout << "After subtraction: " << global_vector[i] << "\n";
+                            }
+                            global_vector.erase(global_vector.begin() + i + 1);
+                            //If IV or IX has been done and there are more numerals, then the form is invalid
+                            if (lastSubtraction == true && i != global_vector.size() - 1) {
+                                std::cout << "This is not a proper Roman Numeral.\n";
+                                return;
+                            }
+                        }
+                        else {
+                            // It is not in level order so is corrupted
+                            std::cout << "This is not a proper Roman Numeral.\n";
+                            return;
+                        }
+                    }
+                    else {
+                        //it is not a correct pair so is corrupted
+                        std::cout << "This is not a proper Roman Numeral.\n";
+                        return;
+                    }
+                }
+                // It is not a sutraction pair and needs to be counted
+                else {
+                    switch (global_vector[i]) {
+                    case 1000:
+                        M += 1;
+                        break;
+                    case 500:
+                        D += 1;
+                        break;
+                    case 100:
+                        C += 1;
+                        break;
+                    case 50:
+                        L += 1;
+                        break;
+                    case 10:
+                        X += 1;
+                        break;
+                    case 5:
+                        V += 1;
+                        break;
+                    case 1:
+                        I += 1;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+            // This is the last or only numeral
+            else{
+                switch (global_vector[i]) {
+                case 1000:
+                    M += 1;
+                    break;
+                case 500:
+                    D += 1;
+                    break;
+                case 100:
+                    C += 1;
+                    break;
+                case 50:
+                    L += 1;
+                    break;
+                case 10:
+                    X += 1;
+                    break;
+                case 5:
+                    V += 1;
+                    break;
+                case 1:
+                    I += 1;
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+    }
+    // The vector is empty
+    else {
+        std::cout << "Nothing has been entered.\n";
+        return;
+    }
+    // Confirm that there are not too many of each numeral so that the rules a upheld note 
+    // for true form the largest possible numeral would be 3999 as this would hit the 3 'M' limit so the 
+    // limit has to be removed for larger numbers until I have a system for denoting the "multiply by 1000" 
+    // symbol used by the Roman numerals. Perhap '_' can be used, but this will need an overhaul of the code above.
+    if (/*M < 4 &&*/ D < 2 && C < 4 && L < 2 && X < 4 && V < 2 && I < 4 && IV < 2 && IX < 2 && XL < 2 && 
+        XC < 2 && CD < 2 && CM < 2) {
+        // If all within limits then check for correct descending order
+        lastNumeral = global_vector[0];
+        // Check there is more than one numeral otherwise the answer is just the value of the one numeral
+        if (global_vector.size() > 1) {
+            // Check each numeral is the same or smaller than the last
+            for (int i{ 0 }; i < global_vector.size(); i++) {
+                if (global_vector[i] <= lastNumeral) {
+                    lastNumeral = global_vector[i];
+                }
+                // If not then return false.
+                else {
+                    std::cout << "This is not a proper Roman Numeral.\n";
+                    return;
+                }
+            }
+            sumUp();
+        }
+        else {
+            sumUp();
+        }
+    }
+}
+
+// Check the subtraction pair is an allowable pair.  If it is then return
+// the position it was found, else return -1.  Pairs ordered by magnitude 
+// to allign with the position in the vector, i.e. the highest index 
+// corresponds to greatest magnitude pair (100,1000).
+
+int checkSubtractionPairs(int a, int b) {
+    
+    int output{ -1 };
+
+    // Store the pairs of integers
+    std::vector<std::pair<int, int>> pairs = {
+        {1, 5}, {1, 10}, {10, 50}, {10, 100}, {100, 500}, {100, 1000}
+    };
+    
+    // Pair to search for
+    std::pair<int, int> searchPair = { a, b };
+    
+    // Search for the pair
+    //int position = -1;
+    for (int i = 0; i < pairs.size(); ++i) {
+        if (pairs[i] == searchPair) {
+            output = i;
+            break;
+        }
+    }
+    // Debug Section
+    if (global_debug) {
+        std::cout << "Pair to Test: " << a << ", " << b << "\n";
+        if (output != -1) {
+            std::cout << "Pair found at position: " << output << "\n";
+        }
+        else {
+            std::cout << "Pair not found" << "\n";
+        }
+    }
+    // Output the result
+    return output;
+}
+
+// Sum up vector (by this point vector should be ready to sum)
+void sumUp() {
+    int answer{ 0 };
+    if (global_vector.size() > 0) {
+        for (int i{ 0 }; i < global_vector.size(); i++) {
+            answer += global_vector[i];
+        }
+        std::cout << "This equates to " << answer << " in decimal.\n";
+    }
+    else {
+        return;
+    }
+}
