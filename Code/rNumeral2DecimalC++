@@ -24,7 +24,7 @@
 
 
 //Global Variables
-const bool global_debug{ true }; //Change this to true for debugging
+const bool global_debug{ false }; //Change this to true for debugging
 std::string global_string{ "" };
 std::vector<int> global_vector;
 
