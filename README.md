@@ -10,7 +10,9 @@ Contained in the repo is an image file of Roman Numerals and their relevant inte
 All collaborations welcome. Any language of your choice.
 
 The aim of the program is to firstly explain the roman numeral system and what each numeral represents numericaly.
-It then asks the user to input a numeral of which they wish to convert to an integer.
+It then asks the user to input a numeral which they wish to convert to an integer.
 Once executed, the programme will output the interger. If a valid numeral is not entered the user will be told and the program
 will stop.
+
+This project will be continually checked for requestes.
 
